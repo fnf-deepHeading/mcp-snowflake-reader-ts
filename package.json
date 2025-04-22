@@ -1,0 +1,48 @@
+{
+  "name": "mcp-snowflake-reader",
+  "version": "0.2.1",
+  "description": "Read-only MCP server for Snowflake databases",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "bin": {
+    "mcp-snowflake-reader": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "prepublishOnly": "npm run build",
+    "test": "tsc && node dist/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/[사용자명]/mcp-snowflake-reader.git"
+  },
+  "keywords": [
+    "mcp",
+    "snowflake",
+    "database",
+    "ai",
+    "claude",
+    "cursor"
+  ],
+  "author": "Miseon Kim",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.1",
+    "commander": "^13.1.0",
+    "snowflake-sdk": "^2.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "@types/snowflake-sdk": "^1.6.12",
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/[사용자명]/mcp-snowflake-reader/issues"
+  },
+  "homepage": "https://github.com/[사용자명]/mcp-snowflake-reader#readme"
+}
