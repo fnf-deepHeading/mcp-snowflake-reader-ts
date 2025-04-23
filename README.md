@@ -9,6 +9,9 @@ A read-only MCP server for Snowflake databases. This server provides secure, rea
 ### Features
 
 - **Read-only Access**: Secure read-only access to Snowflake databases
+- **Cross-platform Support**: Works on Windows, macOS, and Linux
+- **Query Caching**: Reduces Snowflake compute costs by caching query results
+- **Connection Testing**: Optimized connection testing without executing queries
 
 ### Installation
 
@@ -40,6 +43,12 @@ Add the following configuration to your MCP client settings file (Cursor AI or C
 }
 ```
 
+### Logging
+
+Logs are saved in the following locations:
+- **Windows**: `%TEMP%\mcp-snowflake-reader\app.log`
+- **macOS/Linux**: `/tmp/mcp-snowflake-reader/app.log`
+
 ### Limitations
 
 - Only read-only operations are allowed
@@ -68,6 +77,9 @@ Snowflake 데이터베이스의 테이블을 읽어오는 MCP(Microservice Contr
 ### 주요 기능
 
 - **읽기 전용 접근**: Snowflake 데이터베이스에 대한 안전한 읽기 전용 접근
+- **크로스 플랫폼 지원**: Windows, macOS, Linux에서 모두 작동
+- **쿼리 캐싱**: 쿼리 결과를 캐싱하여 Snowflake 컴퓨팅 비용 절감
+- **연결 테스트 최적화**: 실제 쿼리 실행 없이 연결 상태 확인
 
 ### 설치
 
@@ -98,6 +110,12 @@ Cursor AI나 Claude와 같은 MCP 클라이언트의 설정 파일에 다음 설
   }
 }
 ```
+
+### 로깅
+
+로그는 다음 위치에 저장됩니다:
+- **Windows**: `%TEMP%\mcp-snowflake-reader\app.log`
+- **macOS/Linux**: `/tmp/mcp-snowflake-reader/app.log`
 
 ### 제한사항
 

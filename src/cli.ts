@@ -1,54 +1,89 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import MCPSnowflakeReader, { SnowflakeConnectionConfig } from './index.js';
+import { MCPSnowflakeReader } from './index.js';
+import { Logger } from './utils/logger.js';
 
-// CLI 프로그램 정의
-const program = new Command();
-program
-  .name('mcp-snowflake-reader')
-  .description('Snowflake 데이터베이스의 읽기 전용 MCP 서버')
-  .version('0.2.1')
-  .requiredOption('--connection <json>', 'JSON 문자열 형식의 Snowflake 연결 정보');
+// 시작 시간 기록
+const startTime = new Date().toISOString();
+Logger.info(`MCP Snowflake Reader CLI 시작 (${startTime})`);
 
-program.parse(process.argv);
-
-const options = program.opts();
-
-// 연결 정보 파싱
-let connectionConfig: SnowflakeConnectionConfig;
-try {
-  connectionConfig = JSON.parse(options.connection);
-} catch (error) {
-  console.error('연결 정보가 올바른 JSON 형식이 아닙니다.');
-  process.exit(1);
-}
-
-// MCP 서버 인스턴스 생성 및 시작
-const server = new MCPSnowflakeReader(connectionConfig);
-
-// 종료 시그널 처리
-const handleShutdown = async () => {
-  console.log('\n👋 MCP Snowflake Reader가 종료됩니다.');
-  try {
-    await server.stop();
-    process.exit(0);
-  } catch (error) {
-    console.error('종료 중 오류 발생:', error);
-    process.exit(1);
-  }
-};
-
-// SIGINT(Ctrl+C) 및 SIGTERM 이벤트 처리
-process.on('SIGINT', handleShutdown);
-process.on('SIGTERM', handleShutdown);
-
-// 서버 시작 (top-level await 대신 즉시 실행 함수 사용)
 (async () => {
   try {
+    const program = new Command();
+
+    program
+      .name('mcp-snowflake-reader')
+      .description('MCP Snowflake Reader 서버')
+      .version('0.2.1')
+      .requiredOption(
+        '--connection <json>',
+        'Snowflake 연결 정보 (JSON 형식)'
+      );
+
+    program.parse();
+
+    const options = program.opts();
+    let connectionConfig;
+
+    try {
+      connectionConfig = JSON.parse(options.connection);
+      Logger.info('Snowflake 연결 설정 파싱 성공');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      Logger.error(`연결 설정 파싱 오류: ${errorMessage}`);
+      console.error('Error: 연결 설정이 올바른 JSON 형식이 아닙니다.');
+      process.exit(1);
+    }
+    
+    const server = new MCPSnowflakeReader(connectionConfig);
+    
+    try {
+      await server.testConnection();
+      Logger.info('Snowflake 연결 테스트 성공');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      Logger.error(`Snowflake 연결 테스트 실패: ${errorMessage}`);
+      console.error('Error: Snowflake 연결에 실패했습니다.');
+      process.exit(1);
+    }
+    
     await server.start();
+    Logger.info('MCP 서버 시작됨');
+
+    const shutdown = async (signal: string) => {
+      try {
+        Logger.info(`신호 수신: ${signal}, 서버 종료 중...`);
+        await server.stop();
+        Logger.info('서버가 정상적으로 종료되었습니다.');
+        process.exit(0);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        Logger.error(`서버 종료 중 오류 발생: ${errorMessage}`);
+        process.exit(1);
+      }
+    };
+
+    // Windows와 Unix 시스템 모두에서 작동하는 신호 처리
+    process.on('SIGINT', () => shutdown('SIGINT'));
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    
+    // Windows 전용 처리
+    if (process.platform === 'win32') {
+      const rl = require('readline').createInterface({
+        input: process.stdin,
+        output: process.stdout
+      });
+      
+      rl.on('SIGINT', () => {
+        process.emit('SIGINT' as any);
+      });
+    }
+
   } catch (error) {
-    console.error('서버 시작 실패:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    Logger.error(`예기치 않은 오류: ${errorMessage}`);
+    console.error(`오류가 발생했습니다: ${errorMessage}`);
     process.exit(1);
   }
 })(); 

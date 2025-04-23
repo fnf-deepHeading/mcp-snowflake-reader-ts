@@ -12,11 +12,17 @@
     "build": "tsc",
     "start": "node dist/cli.js",
     "prepublishOnly": "npm run build",
-    "test": "tsc && node dist/test.js"
+    "test": "tsc && node dist/test.js",
+    "prepare": "npm run build"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/[사용자명]/mcp-snowflake-reader.git"
+    "url": "git+https://github.com/fnf-deepHeading/mcp-snowflake-reader.git"
   },
   "keywords": [
     "mcp",
@@ -24,14 +30,16 @@
     "database",
     "ai",
     "claude",
-    "cursor"
+    "cursor",
+    "model context protocol"
   ],
   "author": "Miseon Kim",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.10.1",
+    "@modelcontextprotocol/sdk": "^1.10.2",
     "commander": "^13.1.0",
-    "snowflake-sdk": "^2.0.3"
+    "snowflake-sdk": "^2.0.3",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^22.14.1",
@@ -42,7 +50,7 @@
     "node": ">=18.0.0"
   },
   "bugs": {
-    "url": "https://github.com/[사용자명]/mcp-snowflake-reader/issues"
+    "url": "https://github.com/fnf-deepHeading/mcp-snowflake-reader/issues"
   },
-  "homepage": "https://github.com/[사용자명]/mcp-snowflake-reader#readme"
+  "homepage": "https://github.com/fnf-deepHeading/mcp-snowflake-reader#readme"
 }
